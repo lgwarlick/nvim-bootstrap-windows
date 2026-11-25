@@ -34,6 +34,7 @@ How the bootstrapper is built. What it must do is in [REQUIREMENTS.md](REQUIREME
 | `tests/Integration/` | Integration tests; isolated temporary paths, external installs mocked |
 | `tests/Compatibility/` | The release compatibility check (COMPATIBILITY.md) |
 | `tests/Fixtures/` | Sample configs, sample PowerShell/Terraform/YAML files |
+| `tests/EndToEnd/` | Real end-to-end tests run in Windows Sandbox (ADR-021) |
 
 ### Where pins live
 
@@ -69,7 +70,8 @@ and the one-responsibility-per-function rule.
 ```text
 bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │
-  0. Preflight ─ elevated? x64? WinGet present? manifest valid? ──── no ──► stop, exit 3
+  0. Preflight ─ elevated? x64? WinGet present? manifest valid?
+  │              previous run interrupted (FR-63)? ─────────────────── fails ──► stop, exit 3
   │
   1. Shared dependencies (Tier B) ─ detect each; install tested version if missing;
   │                                 stop if below minimum (exit 3); refresh session PATH
@@ -222,6 +224,7 @@ Approved 2026-11-25. Everything not listed keeps Neovim's default.
 | Unit | Each function's logic, including failure, idempotency, and `-WhatIf` paths | None; WinGet, Neovim, and file system effects mocked |
 | Integration | Full orchestrator runs: fresh install, rerun, upgrade, injected failures and rollback | Real file operations in isolated temporary folders; WinGet mocked |
 | Compatibility | The release compatibility check (COMPATIBILITY.md) | Real headless Neovim with an isolated profile (`LOCALAPPDATA`/`XDG_*` pointed at a temporary folder) |
+| End-to-end | Real installs, Neovim downgrade and rollback, interrupted runs, fresh-machine runs | Windows Sandbox only; discarded after each run (ADR-021) |
 
 No test touches the user's real Neovim configuration or data. Tests run on Windows PowerShell 5.1 with Pester 5.9.1
 (ADR-013).

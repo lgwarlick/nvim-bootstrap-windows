@@ -67,6 +67,7 @@ demonstrated.
 | FR-60 | If configuration deployment or plugin installation fails, restore the previous configuration and plugin data from the backup. | Integration tests: injected failures |
 | FR-61 | If the run changed the Neovim version and a later step fails, reinstall the previously installed Neovim version. | Integration test (WinGet mocked) |
 | FR-62 | Never delete backups automatically. | Unit tests; code review |
+| FR-63 | If the newest backup belongs to a run that never finished (for example, interrupted by Ctrl+C or power loss), stop before making changes, report the interrupted run and its backup path, and explain how to restore it. | Unit tests; end-to-end test |
 
 Backup and recovery details are defined in ROLLBACK.md.
 

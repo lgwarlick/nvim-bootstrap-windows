@@ -29,6 +29,7 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 | [ADR-018](#adr-018-pins-are-data-files-validated-against-documents) | Pins are data files, validated against documents | Accepted |
 | [ADR-019](#adr-019-neovim-configuration-split-into-lua-modules) | Neovim configuration split into Lua modules | Accepted |
 | [ADR-020](#adr-020-rollback-scope-and-method) | Rollback scope and method | Accepted |
+| [ADR-021](#adr-021-windows-sandbox-for-end-to-end-tests) | Windows Sandbox for end-to-end tests | Accepted |
 
 ---
 
@@ -247,3 +248,16 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
   - Never delete backups automatically.
 - **Consequences:** Every non-trivial install starts from empty plugin and tool folders (clean, reproducible).
   Details in ROLLBACK.md.
+
+## ADR-021: Windows Sandbox for end-to-end tests
+
+- **Status:** Accepted (2026-11-25)
+- **Context:** Some behavior can only be proven with real installs: a fresh-machine run, a real Neovim downgrade and
+  rollback, and interrupted runs. AGENTS.md forbids destructive integration tests on the host. The reference test
+  device (Windows 11 Pro, hypervisor running) supports Windows Sandbox, and is the test device for future releases.
+- **Decision:** Run real end-to-end tests in Windows Sandbox, which starts from a clean Windows 11 each launch and is
+  discarded on close. Enabling the Windows Sandbox optional feature on the reference test device is a one-time host
+  change made by the project owner or with explicit approval.
+- **Consequences:** Every release can be verified on a clean machine. Test setup must install WinGet inside the
+  sandbox, since it is not preinstalled. The sandbox uses the host's Windows build, so it matches the reference test
+  device.

@@ -68,6 +68,7 @@ Live locations come from Neovim's `stdpath()` (ARCHITECTURE.md, Path resolution)
 | `items` | One entry per backed-up item: name, original path, whether it existed, file list |
 | `files` (per item) | Relative path and size of every file; SHA-256 hash for configuration files |
 | `status` | `created` → `verified` → (`restored` if a rollback used it) |
+| `runCompleted` | Timestamp set when the run that made this backup finishes (success or completed rollback); absent if the run was interrupted (FR-63) |
 
 ## How backup works
 
