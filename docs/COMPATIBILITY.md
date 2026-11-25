@@ -71,13 +71,15 @@ user's real configuration:
 
 1. **Install from scratch:** lazy.nvim restores every plugin at its locked commit with no errors; Mason installs
    every pinned tool at its pinned version; every listed tree-sitter parser builds.
-2. **Clean health checks:** `:checkhealth` reports no errors for lazy, mason, nvim-treesitter, and vim.lsp.
+2. **Clean health checks:** `:checkhealth` reports no errors for lazy, mason, nvim-treesitter, vim.lsp, and the
+   clipboard provider.
 3. **Language support works** on a sample PowerShell, Terraform, and YAML file each:
    - the language server attaches;
    - tree-sitter highlighting is active;
    - the formatter runs and changes a deliberately misformatted sample;
    - the linter reports a deliberately introduced problem.
-4. **Plugins load:** every plugin in PLUGINS.md loads without errors or deprecation warnings at startup.
+4. **Plugins load:** every plugin in PLUGINS.md loads without errors or deprecation warnings at startup;
+   blink.cmp uses its prebuilt Rust fuzzy matcher (not the Lua fallback).
 5. **No drift:** after the run, `lazy-lock.json` is unchanged and matches PLUGINS.md.
 
 How the check is automated is defined in the phase documents (Phase 05 builds it; Phase 07 runs it for release).

@@ -62,7 +62,6 @@ checks are first added.
 | Known issue 3: refresh session PATH after installs | COMPATIBILITY.md | 03 |
 | Known issue 4: report when a WinGet version is no longer available | COMPATIBILITY.md | 03 (installs), 06 (rollback) |
 | Known issue 5: disable lazy.nvim luarocks support | COMPATIBILITY.md | 05 |
-| Editor options and key mappings for 1.0.0 (needs approval) | ARCHITECTURE.md | 05 |
 | Neovim MSI in-place downgrade behavior | ROLLBACK.md | 06 |
 | Unelevated Neovim can use files created by the elevated run | ARCHITECTURE.md risks | 06 |
 

@@ -189,6 +189,31 @@ one unit.
   Services bundle (ADR-017).
 - **The bootstrapper is the only installer.** Plugins, Mason tools, and parsers are installed during step 7 in
   headless Neovim. Opening the editor normally never downloads or updates anything.
+- **No Nerd Font is assumed** (nvim-web-devicons is excluded). Every plugin UI, including neo-tree icons and
+  blink.cmp completion kinds, must render with standard fonts.
+
+### Editor defaults (1.0.0)
+
+Approved 2026-11-25. Everything not listed keeps Neovim's default.
+
+| Area | Setting |
+|---|---|
+| Leader key | Space (set before lazy.nvim loads) |
+| Line numbers | Absolute on the cursor line, relative elsewhere (`number`, `relativenumber`) |
+| Clipboard | System clipboard (`clipboard=unnamedplus`) |
+| Undo | Persistent (`undofile`); stored under `stdpath('state')`, never backed up or touched by the bootstrapper |
+| Search | Case-insensitive unless the pattern has a capital (`ignorecase`, `smartcase`) |
+| Indentation | Spaces; PowerShell 4, Terraform/HCL 2, YAML 2 (matching their formatters) |
+| Formatting | On save for PowerShell, Terraform, and YAML; also `<leader>f` to format manually |
+| Linting | When a file is opened and after each save |
+| Colorscheme | Neovim default |
+
+| Mapping | Action |
+|---|---|
+| `<leader>e` | Toggle the file explorer (neo-tree) |
+| `<leader>f` | Format the current buffer |
+| Neovim built-ins | Language server actions use Neovim 0.12 defaults: `K` hover, `grn` rename, `gra` code action, `grr` references, `gri` implementation, `[d` / `]d` diagnostics. No custom mappings duplicate them. |
+| Plugin defaults | blink.cmp `default` keymap preset; gitsigns.nvim default hunk navigation (`[c` / `]c`) |
 
 ## Testing approach
 
@@ -210,6 +235,4 @@ No test touches the user's real Neovim configuration or data. Tests run on Windo
 
 ## Open questions
 
-1. **Editor options and key mappings:** no document yet says which editor options or key mappings 1.0.0 should
-   set (`lua/config/options.lua`, `lua/config/keymaps.lua`, and plugin mappings such as opening neo-tree). To be
-   specified in the Phase 05 document, with approval.
+None.
