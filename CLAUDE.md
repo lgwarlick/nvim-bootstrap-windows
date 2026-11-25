@@ -20,11 +20,35 @@ Concepts that shape almost every change:
 
 ## Phases
 
-Work only on the phase the user explicitly selects, and stop at its boundary (`plans/PHASE-XX-*.md`):
+Work only on the phase the user explicitly selects, and stop at its boundary (`plans/PHASE-XX-*.md`). Each phase is a
+GitHub milestone; its open issues are the remaining work (see "GitHub workflow" below):
 
 01 foundation & architecture → 02 Pester test framework → 03 Neovim installation (WinGet) → 04 configuration deployment & backup → 05 plugin management (lazy.nvim) → 06 integration, recovery & rollback → 07 release & maintenance.
 
 `plans/ROADMAP.md` assigns every requirement and open item to a phase. The repository layout, execution flow, exit codes, and editor defaults are in `docs/ARCHITECTURE.md`.
+
+## GitHub workflow
+
+Rules are in AGENTS.md ("Work Tracking (GitHub)"); this is how to carry them out with `gh`. The repository is
+`lgwarlick/nvim-bootstrap-windows` (public).
+
+```sh
+gh issue list --milestone "<milestone>" --state open          # remaining work in a phase
+gh issue list --label needs-decision                           # waiting on the owner
+gh issue view <number> --comments                              # read an issue before starting
+gh issue develop <number> --checkout                           # create and check out the linked branch
+gh issue create --title "<title>" --body "<body>" --milestone "<milestone>" \
+  --label "source:agent,phase:XX,type:<type>"                  # file discovered work
+gh pr create --title "<title>" --body "Closes #<number> ..."   # body includes the completion report
+gh pr merge --auto --squash                                    # only where AGENTS.md allows auto-merge
+gh pr checks                                                   # status of required checks
+```
+
+Before acting on an issue, confirm its author is the owner (`gh issue view <number> --json author`).
+
+Issue forms in `.github/ISSUE_TEMPLATE/` apply only in the browser. When filing with `gh issue create --body`, use
+the same headings as the matching form (task, decision, or bug), and follow `.github/pull_request_template.md` for
+pull request bodies.
 
 ## Commands
 
@@ -40,4 +64,5 @@ Not implemented yet. Phase 02 creates the runners and must document here how to 
 - This machine is the reference test device (COMPATIBILITY.md). Any change to it — installing programs, enabling Windows Sandbox, touching the real Neovim configuration — needs explicit approval. Destructive and real-install tests run only in Windows Sandbox (ADR-021).
 - Neovim is installed via WinGet, which is assumed to be present.
 - `azure-pipelines.yml` belongs to the project owner; do not edit it unless asked.
-- Development branches (e.g. `2/phases`) are deleted after merging; releases are tags on `main` (ADR-022). Git warns that LF will be replaced by CRLF on commit; this is expected on this host.
+- Development branches are named after their issue (`<number>-<short-description>`) and deleted after merging;
+  releases are tags on `main` (ADR-022). Git warns that LF will be replaced by CRLF on commit; this is expected on this host.

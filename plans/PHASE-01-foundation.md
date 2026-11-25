@@ -1,7 +1,7 @@
 # Phase 01 - Foundation and architecture
 
 ## Status
-Complete (2026-11-25)
+Tracked in the GitHub milestone **Phase 01 - Foundation and architecture** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 

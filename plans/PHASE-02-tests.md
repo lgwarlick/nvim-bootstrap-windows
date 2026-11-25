@@ -1,7 +1,7 @@
 # Phase 2 - Pester test framework
 
 ## Status
-Not Started
+Tracked in the GitHub milestone **Phase 02 - Pester test framework** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 Create test helpers, fixtures, mocks, test execution commands, and initial failing tests for expected installation behavior.

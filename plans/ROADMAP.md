@@ -8,18 +8,20 @@ phase without authorization.
 
 ## Phases
 
-| # | Phase | Document | Depends on | Status |
-|---|---|---|---|---|
-| 01 | Foundation and architecture | [PHASE-01-foundation.md](PHASE-01-foundation.md) | — | Complete |
-| 02 | Pester test framework | [PHASE-02-tests.md](PHASE-02-tests.md) | 01 | Not started |
-| 03 | Neovim and dependency installation | [PHASE-03-installation.md](PHASE-03-installation.md) | 01, 02 | Not started |
-| 04 | Configuration deployment and backup | [PHASE-04-configuration.md](PHASE-04-configuration.md) | 01–03 | Not started |
-| 05 | Plugin management | [PHASE-05-plugins.md](PHASE-05-plugins.md) | 01–04 | Not started |
-| 06 | Integration, recovery, and rollback | [PHASE-06-validation.md](PHASE-06-validation.md) | 01–05 | Not started |
-| 07 | Release and maintenance | [PHASE-07-release.md](PHASE-07-release.md) | 01–06 | Not started (plan is a work in progress) |
+| # | Phase | Document | Depends on |
+|---|---|---|---|
+| 01 | Foundation and architecture | [PHASE-01-foundation.md](PHASE-01-foundation.md) | — |
+| 02 | Pester test framework | [PHASE-02-tests.md](PHASE-02-tests.md) | 01 |
+| 03 | Neovim and dependency installation | [PHASE-03-installation.md](PHASE-03-installation.md) | 01, 02 |
+| 04 | Configuration deployment and backup | [PHASE-04-configuration.md](PHASE-04-configuration.md) | 01–03 |
+| 05 | Plugin management | [PHASE-05-plugins.md](PHASE-05-plugins.md) | 01–04 |
+| 06 | Integration, recovery, and rollback | [PHASE-06-validation.md](PHASE-06-validation.md) | 01–05 |
+| 07 | Release and maintenance | [PHASE-07-release.md](PHASE-07-release.md) | 01–06 |
 
-Phases are strictly sequential. A phase's status changes to **Complete** only when its completion evidence is
-reported and accepted.
+Phases are strictly sequential. Each phase is a GitHub milestone with the same number and name, and its issues are
+the phase's work items (AGENTS.md, Work Tracking). Phase status is the milestone's state, shown on the
+[milestones page](https://github.com/lgwarlick/nvim-bootstrap-windows/milestones); it is not repeated here. A
+milestone is closed only when the phase's completion evidence is reported and accepted.
 
 ## What each phase delivers
 
@@ -51,6 +53,8 @@ NFR-01, NFR-03, NFR-04, and NFR-05 apply to all code in every phase; the phase l
 checks are first added.
 
 ## Open items assigned to phases
+
+This table assigns each item to a phase. Progress on each item is tracked in its GitHub issue.
 
 | Item | Source | Phase |
 |---|---|---|

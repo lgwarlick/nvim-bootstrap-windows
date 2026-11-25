@@ -1,7 +1,7 @@
 # Phase 05 - Plugin management
 
 ## Status
-Not Started
+Tracked in the GitHub milestone **Phase 05 - Plugin management** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 Integrate lazy.nvim, define plugin specifications, manage plugin revisions, and configure LSP, formatting, Treesitter, and editor behavior.

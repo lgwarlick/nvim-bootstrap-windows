@@ -1,7 +1,7 @@
 # Phase 03 - Neovim installation
 
 ## Status
-Not Started
+Tracked in the GitHub milestone **Phase 03 - Neovim and dependency installation** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 Implement detection, minimum-version enforcement, package-manager integration, dependency checks, PATH handling, and idempotency

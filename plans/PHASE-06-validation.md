@@ -1,7 +1,7 @@
 # Phase 06 - Integration, recovery, and rollback
 
 ## Status
-Not Started
+Tracked in the GitHub milestone **Phase 06 - Integration, recovery, and rollback** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 
