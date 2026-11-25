@@ -80,6 +80,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │
   4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data')
   5. Existing configuration ─ identical to release? → skip 5–6
+  │                           Neovim running? → stop, exit 3 (FR-34)
   │                           otherwise: approval (FR-33), then back up by move + verify (ROLLBACK.md)
   6. Deploy configuration
   7. Plugins and tools ─ Lazy! restore → Mason tools at pinned versions → tree-sitter parsers
@@ -98,6 +99,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 | 2–3 | Previous Neovim version reinstalled if step 2 changed it (FR-61) | 1, or 2 if restore fails |
 | 5 (approval declined, or non-interactive without `-Force`) | Nothing changed; no backup made | 3 |
 | 5 (live folder on a different drive from the backup folder) | Nothing changed | 3 |
+| 5 (Neovim is running) | Nothing changed | 3 |
 | 5 (backup failed or not verified) | Moved items moved back and verified; nothing deployed | 1, or 2 if moving back fails |
 | 6–8 | Configuration and plugin data restored from backup (FR-60); previous Neovim reinstalled if changed | 1, or 2 if restore fails |
 
