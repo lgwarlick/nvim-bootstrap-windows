@@ -10,7 +10,7 @@ AGENTS.md is the authoritative rule set: document hierarchy, phase workflow (tes
 
 ## Project state
 
-Phase 01 (foundation) produced all governing documents; implementation has not started. Every file under `src/` and `scripts/` is still an empty placeholder. Phases 02–06 have complete plans; the Phase 07 plan is a work in progress with open questions that must be resolved with the project owner before it begins. When an authoritative document is empty or silent, report the gap and ask — do not invent its content.
+Phase 01 (foundation) is complete and produced all governing documents; implementation has not started. Every file under `src/` and `scripts/` is still an empty placeholder. Phases 02–06 have complete plans; the Phase 07 plan is a work in progress with open questions that must be resolved with the project owner before it begins. When an authoritative document is empty or silent, report the gap and ask — do not invent its content.
 
 Concepts that shape almost every change:
 

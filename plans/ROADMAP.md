@@ -10,7 +10,7 @@ phase without authorization.
 
 | # | Phase | Document | Depends on | Status |
 |---|---|---|---|---|
-| 01 | Foundation and architecture | [PHASE-01-foundation.md](PHASE-01-foundation.md) | — | In progress |
+| 01 | Foundation and architecture | [PHASE-01-foundation.md](PHASE-01-foundation.md) | — | Complete |
 | 02 | Pester test framework | [PHASE-02-tests.md](PHASE-02-tests.md) | 01 | Not started |
 | 03 | Neovim and dependency installation | [PHASE-03-installation.md](PHASE-03-installation.md) | 01, 02 | Not started |
 | 04 | Configuration deployment and backup | [PHASE-04-configuration.md](PHASE-04-configuration.md) | 01–03 | Not started |
