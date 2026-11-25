@@ -23,6 +23,7 @@ A major release also links to its section in [docs/UPGRADING.md](docs/UPGRADING.
 
 - `AGENTS.md` re-encoded from UTF-16 to UTF-8 and typos corrected; no rule changes.
 - `docs/PLUGINS.md` rewritten with repository owners, pinned versions, plugin dependencies, and Mason tools.
+- Work tracking moved to GitHub issues and milestones; issue and pull request templates added.
 
 ### Pins
 
