@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-AGENTS.md is the authoritative rule set: document hierarchy, phase workflow (tests first → confirm they fail for the right reason → smallest change), safety rules, and the end-of-phase completion report. Do not duplicate its rules here. Note: AGENTS.md is encoded as UTF-16 LE (with BOM), so grep/ripgrep may not match its text — read it with the Read tool.
+AGENTS.md is the authoritative rule set: document hierarchy, phase workflow (tests first → confirm they fail for the right reason → smallest change), safety rules, and the end-of-phase completion report. Do not duplicate its rules here. Keep all Markdown files UTF-8 (no BOM) so they stay searchable.
 
 ## Project state
 
