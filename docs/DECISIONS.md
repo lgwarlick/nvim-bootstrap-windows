@@ -30,6 +30,7 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 | [ADR-019](#adr-019-neovim-configuration-split-into-lua-modules) | Neovim configuration split into Lua modules | Accepted |
 | [ADR-020](#adr-020-rollback-scope-and-method) | Rollback scope and method | Accepted |
 | [ADR-021](#adr-021-windows-sandbox-for-end-to-end-tests) | Windows Sandbox for end-to-end tests | Accepted |
+| [ADR-022](#adr-022-releases-are-github-releases-from-tags-on-main) | Releases are GitHub Releases from tags on main | Accepted |
 
 ---
 
@@ -261,3 +262,21 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 - **Consequences:** Every release can be verified on a clean machine. Test setup must install WinGet inside the
   sandbox, since it is not preinstalled. The sandbox uses the host's Windows build, so it matches the reference test
   device.
+
+## ADR-022: Releases are GitHub Releases from tags on main
+
+- **Status:** Accepted (2026-11-25). Further release details are open in PHASE-07-release.md.
+- **Context:** Releases must be easy to download and run, reproducible, and built the same way every time. Older
+  releases are not supported, so there is no need to maintain several release lines.
+- **Decision:**
+  - A release is a GitHub Release in the public repository, built by an Azure DevOps pipeline owned by the project
+    owner.
+  - Each release is a tag on a commit on `main`; there are no release branches. Development branches are deleted
+    after merging.
+  - The pipeline runs on a merge to `main` whose commit or pull request title starts with a release prefix; the
+    prefix sets how the version number is incremented, following ADR-002.
+  - A validation check requires every place the version appears to match.
+  - The release asset contains what is needed to run the bootstrapper, README.md, CHANGELOG.md, and a checksum file.
+  - Only the latest release is supported; fixes ship in the next release.
+- **Consequences:** Users always download from GitHub Releases. Prefix format, where the version is written, and
+  how machine-only tests fit into the pipeline are open in PHASE-07-release.md.

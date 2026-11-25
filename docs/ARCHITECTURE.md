@@ -35,6 +35,8 @@ How the bootstrapper is built. What it must do is in [REQUIREMENTS.md](REQUIREME
 | `tests/Compatibility/` | The release compatibility check (COMPATIBILITY.md) |
 | `tests/Fixtures/` | Sample configs, sample PowerShell/Terraform/YAML files |
 | `tests/EndToEnd/` | Real end-to-end tests run in Windows Sandbox (ADR-021) |
+| `azure-pipelines.yml` | Release pipeline (owned by the project owner; ADR-022) |
+| `docs/UPGRADING.md` | Upgrade guide, one section per major version |
 
 ### Where pins live
 

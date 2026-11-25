@@ -16,7 +16,7 @@ phase without authorization.
 | 04 | Configuration deployment and backup | [PHASE-04-configuration.md](PHASE-04-configuration.md) | 01–03 | Not started |
 | 05 | Plugin management | [PHASE-05-plugins.md](PHASE-05-plugins.md) | 01–04 | Not started |
 | 06 | Integration, recovery, and rollback | [PHASE-06-validation.md](PHASE-06-validation.md) | 01–05 | Not started |
-| 07 | Release and maintenance | [PHASE-07-release.md](PHASE-07-release.md) | 01–06 | Not started |
+| 07 | Release and maintenance | [PHASE-07-release.md](PHASE-07-release.md) | 01–06 | Not started (plan is a work in progress) |
 
 Phases are strictly sequential. A phase's status changes to **Complete** only when its completion evidence is
 reported and accepted.
@@ -31,7 +31,7 @@ reported and accepted.
 | 04 | Neovim path resolution, existing-config detection, approval, backup by move with verification, configuration structure, and deployment. |
 | 05 | lazy.nvim and the pinned plugin set, Mason tools, tree-sitter parsers, language support, editor options and key mappings, and the release compatibility check. |
 | 06 | Full orchestrated run, automatic rollback (including Neovim downgrade), idempotency and upgrade scenarios, manual restore. |
-| 07 | Release checklist, compatibility check run, changelog, README usage, 1.0.0 tag, and the procedure for building the next release. |
+| 07 | GitHub Release produced by the Azure DevOps pipeline, release asset and checksum, version-consistency check, download-and-run instructions. Plan is a work in progress; see its open questions. |
 
 ## Requirement assignment
 

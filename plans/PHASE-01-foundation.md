@@ -51,7 +51,8 @@ No automated tests; this phase produces documents only. Instead, before completi
 ## Acceptance Criteria
 
 - All governing documents listed in Scope are written and approved by the project owner.
-- Phase documents 01–07 are complete and approved.
+- Phase documents 01–06 are complete and approved. Phase 07 is approved as a work in progress, with its decisions
+  recorded and its open questions listed, to be resolved before Phase 07 begins.
 - No open questions remain in REQUIREMENTS.md, ARCHITECTURE.md, COMPATIBILITY.md, or ROLLBACK.md that are not
   assigned to a phase in ROADMAP.md.
 - The only Proposed decisions in DECISIONS.md are ones that can only be settled by testing, and each is assigned to
@@ -71,8 +72,11 @@ No automated tests; this phase produces documents only. Instead, before completi
 | `docs/ARCHITECTURE.md` | Written |
 | `docs/ROLLBACK.md` | Written |
 | `docs/PLUGINS.md` | Rewritten with owners, pins, dependencies, Mason tools |
+| `docs/UPGRADING.md` | Created as a placeholder (one section per major version, none yet) |
+| `azure-pipelines.yml` | Created empty; content owned by the project owner |
 | `plans/ROADMAP.md` | Written |
-| `plans/PHASE-01` … `PHASE-07` | Completed |
+| `plans/PHASE-01` … `PHASE-06` | Completed |
+| `plans/PHASE-07` | Work in progress: decisions so far and open questions |
 | `README.md` | Purpose, prerequisites, links to documents |
 | `CHANGELOG.md` | Created with an Unreleased entry for Phase 01 |
 
