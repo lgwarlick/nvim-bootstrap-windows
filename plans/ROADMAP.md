@@ -41,7 +41,7 @@ it.
 | Phase | Requirements |
 |---|---|
 | 02 | NFR-06, NFR-07 |
-| 03 | FR-10, FR-11, FR-12, FR-20 (Neovim, tree-sitter-cli), FR-21, FR-22, FR-71 (for its functions), FR-80, NFR-01, NFR-02, NFR-03, NFR-05, NFR-08, NFR-09 (codes 0, 1, 3) |
+| 03 | FR-10, FR-11, FR-12, FR-13, FR-20 (Neovim, tree-sitter-cli), FR-21, FR-22, FR-71 (for its functions), FR-80, NFR-01, NFR-02, NFR-03, NFR-05, NFR-08, NFR-09 (codes 0, 1, 3) |
 | 04 | FR-30, FR-31, FR-32, FR-33, FR-62, FR-71 (for its functions) |
 | 05 | FR-01, FR-20 (Mason registry and tools), FR-40, FR-41, FR-50, FR-71 (for its functions) |
 | 06 | FR-02, FR-60, FR-61, FR-70, NFR-04, NFR-09 (code 2, all codes end to end), FR-71 (full run) |

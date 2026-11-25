@@ -67,14 +67,15 @@ and the one-responsibility-per-function rule.
 ## Execution flow
 
 ```text
-bootstrap.ps1 [-WhatIf] [-Confirm] [-Force]
+bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │
   0. Preflight ─ elevated? x64? WinGet present? manifest valid? ──── no ──► stop, exit 3
   │
   1. Shared dependencies (Tier B) ─ detect each; install tested version if missing;
   │                                 stop if below minimum (exit 3); refresh session PATH
-  2. Neovim (Tier A) ─ record current version; install pinned version if needed;
-  │                    newer than pinned → stop unless approved (FR-12)
+  2. Neovim (Tier A) ─ not installed by WinGet → stop, exit 3 (FR-13)
+  │                    record current version; install pinned version if needed;
+  │                    newer than pinned → stop unless approved by prompt or -AllowNeovimDowngrade (FR-12)
   3. tree-sitter-cli (Tier A) ─ install pinned version if needed
   │
   4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data')
@@ -127,6 +128,9 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force]
 - Overwriting an existing configuration also requires `$PSCmdlet.ShouldContinue` (an interactive prompt) unless
   `-Force` is given.
 - In a non-interactive session without `-Force`, the run stops at step 5 with exit code 3.
+- Installing an older pinned Neovim over a newer one (FR-12) has its own approval: the prompt, or
+  `-AllowNeovimDowngrade` for unattended runs. `-Force` does not approve it. Without either, the run stops at step 2
+  with exit code 3.
 - A `-WhatIf` run performs all detection steps and reports every change it would make, but changes nothing.
 
 ### Error handling (NFR-05)

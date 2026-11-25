@@ -26,7 +26,8 @@ demonstrated.
 |---|---|---|
 | FR-10 | Install Neovim using WinGet, at the exact version pinned for the release. The WinGet package installs in machine scope only. | Unit tests (WinGet mocked); integration test |
 | FR-11 | Detect an existing Neovim installation and its version before acting. If the pinned version is already installed, make no change. | Unit tests: present/absent/version cases |
-| FR-12 | If an installed Neovim is older than the pinned version, install the pinned version. If it is newer, stop and make no changes unless the user explicitly approves installing the pinned (older) version. | Unit tests: older/newer cases |
+| FR-12 | If an installed Neovim is older than the pinned version, install the pinned version. If it is newer, stop and make no changes unless the user explicitly approves installing the pinned (older) version, by an interactive confirmation prompt or the `-AllowNeovimDowngrade` switch. `-Force` never approves a downgrade. | Unit tests: older/newer cases; prompt / switch / `-Force` only |
+| FR-13 | If Neovim is found on PATH but was not installed by WinGet (`Neovim.Neovim`), stop before making any changes and explain why. | Unit test |
 
 ### Dependencies
 
