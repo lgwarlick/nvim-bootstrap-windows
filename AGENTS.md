@@ -80,6 +80,11 @@ restating them. Phase status is the state of the phase's milestone.
 - Branches are deleted after merging.
 
 
+## Writing Standards
+- Never use emojis in code, files, commit messages, issues, pull requests, or GitHub comments. This includes
+  generated attribution lines.
+
+
 ## PowerShell Standards
 - Use approved PowerShell version from COMPATIBILITY.md
 - Prefer human readable code whenever possible
