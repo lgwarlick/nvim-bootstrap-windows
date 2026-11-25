@@ -1,0 +1,47 @@
+name: Decision
+description: A question the project owner must decide before work can start.
+labels: ["needs-decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for anything AGENTS.md says needs approval: new or changed requirements, changed decisions,
+        pin changes, new dependencies, host changes, or work outside the active phase. Work waits until the
+        owner answers in a comment. An accepted decision is recorded in the governing documents (DECISIONS.md
+        for architectural decisions), not only in this issue.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: The decision needed, stated so it can be answered on its own.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why this came up, with links to the documents, requirement IDs, or ADRs involved.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options
+      description: Each option with its consequences.
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommendation
+      description: The recommended option and why.
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: Documents affected
+      description: Which documents would change, and whether an ADR would be added or superseded.

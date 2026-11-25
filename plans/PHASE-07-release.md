@@ -1,8 +1,10 @@
 # Phase 07 - Release and maintenance
 
 ## Status
-Not Started — **plan is a work in progress.** Decisions so far are recorded below; the open questions must be
-resolved with the project owner before this phase begins.
+Tracked in the GitHub milestone **Phase 07 - Release and maintenance** (see [ROADMAP.md](ROADMAP.md)).
+
+**This plan is a work in progress.** Decisions so far are recorded below; the open questions must be resolved
+with the project owner before this phase begins.
 
 ## Objective
 

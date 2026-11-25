@@ -1,0 +1,31 @@
+name: Bug
+description: Something does not behave as the documents say it should.
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Observed behavior, with exact error text or exit code.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What was expected
+      description: Expected behavior, with the requirement or document that defines it (e.g. FR-33, ROLLBACK.md).
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Release or commit, Windows version, Windows PowerShell version, and whether the run was elevated.

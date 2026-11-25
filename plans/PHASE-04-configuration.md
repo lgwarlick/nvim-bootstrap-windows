@@ -1,7 +1,7 @@
 # Phase 04 - Configuration deployment
 
 ## Status
-Not Started
+Tracked in the GitHub milestone **Phase 04 - Configuration deployment and backup** (see [ROADMAP.md](ROADMAP.md)).
 
 ## Objective
 

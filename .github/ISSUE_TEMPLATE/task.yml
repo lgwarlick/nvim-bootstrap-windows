@@ -1,0 +1,39 @@
+name: Task
+description: A unit of work sized for one branch and one pull request.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rules for issues are in AGENTS.md ("Work Tracking (GitHub)"). Set the milestone and the `phase:` and
+        `type:` labels. Link to documents instead of restating them.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What needs to be done, in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Phase document section, and the requirement or decision IDs this covers (e.g. FR-12, ADR-020).
+      placeholder: |
+        - plans/PHASE-03-installation.md, "Detection"
+        - FR-11, FR-13
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How to tell the work is done. Prefer criteria already in the phase document.
+      placeholder: |
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Context, dependencies on other issues, or how this was discovered.
