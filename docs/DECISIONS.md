@@ -31,6 +31,7 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 | [ADR-020](#adr-020-rollback-scope-and-method) | Rollback scope and method | Accepted |
 | [ADR-021](#adr-021-windows-sandbox-for-end-to-end-tests) | Windows Sandbox for end-to-end tests | Accepted |
 | [ADR-022](#adr-022-releases-are-github-releases-from-tags-on-main) | Releases are GitHub Releases from tags on main | Accepted |
+| [ADR-023](#adr-023-neovim-paths-without-an-installed-neovim) | Neovim paths without an installed Neovim | Accepted |
 
 ---
 
@@ -280,3 +281,23 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
   - Only the latest release is supported; fixes ship in the next release.
 - **Consequences:** Users always download from GitHub Releases. Prefix format, where the version is written, and
   how machine-only tests fit into the pipeline are open in PHASE-07-release.md.
+
+## ADR-023: Neovim paths without an installed Neovim
+
+- **Status:** Accepted (2026-11-25). Decided in issue #5.
+- **Context:** Path resolution asked the installed Neovim for `stdpath('config')` and `stdpath('data')`. In a
+  `-WhatIf` run on a machine without Neovim, step 2 only reports the install, so there is no Neovim to ask, yet
+  FR-71 requires `-WhatIf` to report every change, and PHASE-06 requires a `-WhatIf` run of the fresh-machine
+  scenario. Checks that move into step 0 (issue #6) also need the paths before Neovim is installed.
+- **Decision:**
+  - When Neovim is installed, its own `stdpath('config')` and `stdpath('data')` are used.
+  - When it is not, the paths are computed the way Neovim computes them on Windows: `NVIM_APPNAME` (default
+    `nvim`) under `XDG_CONFIG_HOME` for the configuration and with a `-data` suffix under `XDG_DATA_HOME` for data,
+    falling back to `%LOCALAPPDATA%` when an `XDG_*` variable is not set. The exact rule is in ARCHITECTURE.md,
+    Path resolution.
+  - Unit tests mock both paths. A Compatibility-suite test confirms the computed paths match Neovim's own answer
+    for the same environment.
+- **Consequences:** `-WhatIf` reports concrete paths on a fresh machine, and precondition checks can run in step 0.
+  If a future Neovim changes how it computes these paths, the Compatibility-suite test fails and the rule is
+  updated with the Neovim pin. Rejected: reporting without paths (vague `-WhatIf` output), and always computing
+  from the environment (drops Neovim as the source of truth when it is present).

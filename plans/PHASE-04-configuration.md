@@ -27,6 +27,8 @@ implements its "How backup works" section exactly.
 ### Step 4 — Path resolution (FR-30)
 - `Get-NeovimPath`: asks the installed Neovim for `stdpath('config')` and `stdpath('data')` via
   `Invoke-NeovimHeadless`, using `--clean` so a broken existing configuration cannot interfere.
+- When Neovim is not installed, `Get-NeovimPath` computes both paths from `NVIM_APPNAME`, `XDG_CONFIG_HOME`,
+  `XDG_DATA_HOME`, and `LOCALAPPDATA` as described in ARCHITECTURE.md, Path resolution (ADR-023).
 - Derives the backup items from ROLLBACK.md: configuration, `data\lazy`, `data\mason`, `data\site\parser`,
   `data\site\queries`.
 
@@ -61,8 +63,9 @@ implements its "How backup works" section exactly.
 - Any change to the real configuration on the host other than through `-WhatIf`.
 
 ## Test Requirements
-- Unit (mocked): path resolution from Neovim output; current/not-current detection (identical, changed file, extra
-  file, missing file); approval accepted / declined / `-Force` / non-interactive without `-Force`; different-drive
+- Unit (mocked): path resolution from Neovim output; path resolution without Neovim (defaults, each of
+  `NVIM_APPNAME`, `XDG_CONFIG_HOME`, `XDG_DATA_HOME` set, and all three set); current/not-current detection
+  (identical, changed file, extra file, missing file); approval accepted / declined / `-Force` / non-interactive without `-Force`; different-drive
   stop; Neovim running → exit 3 with no changes (process list mocked); manifest contents; verification catches a missing or changed file; move-back after a failed backup;
   `-WhatIf` moves and copies nothing.
 - Integration (sandbox with real files, WinGet mocked):
@@ -74,6 +77,8 @@ implements its "How backup works" section exactly.
   - Simulated verification failure → items moved back, exit 1.
 - Real Neovim, sandboxed: `stdpath()` honors the sandbox's `LOCALAPPDATA` and `XDG_*` values; the deployed
   configuration starts headless with no errors.
+- Compatibility suite (real Neovim, sandboxed): for the same environment cases as the unit tests, the paths
+  computed without Neovim equal Neovim's own `stdpath('config')` and `stdpath('data')` (ADR-023).
 - No test or code path deletes a file; the new validation check enforces it for `src/`.
 
 ## Implementation Constraints
