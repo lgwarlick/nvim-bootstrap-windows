@@ -1,4 +1,4 @@
-# Phase 03 - Neovim installation
+# Phase 03 - Neovim and dependency installation
 
 ## Status
 Tracked in the GitHub milestone **Phase 03 - Neovim and dependency installation** (see [ROADMAP.md](ROADMAP.md)).

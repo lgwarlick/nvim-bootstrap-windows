@@ -1,4 +1,4 @@
-# Phase 2 - Pester test framework
+# Phase 02 - Pester test framework
 
 ## Status
 Tracked in the GitHub milestone **Phase 02 - Pester test framework** (see [ROADMAP.md](ROADMAP.md)).

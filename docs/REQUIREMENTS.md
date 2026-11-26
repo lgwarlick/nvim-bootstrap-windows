@@ -90,13 +90,13 @@ Backup and recovery details are defined in ROLLBACK.md.
 |---|---|---|
 | NFR-01 | Runs on Windows 11 with Windows PowerShell 5.1. Code uses no PowerShell 7-only syntax. | Tests run under 5.1; static check |
 | NFR-02 | Runs in an elevated PowerShell session, started by the account that will use Neovim (user paths resolve from that account's profile). The bootstrapper checks for elevation at startup and stops with a clear message if not elevated. | Unit tests: elevated / not elevated |
-| NFR-08 | Supports the x64 CPU architecture only. On any other architecture, stop with a clear message before making changes. Other architectures may be added in later releases. | Unit tests: architecture check |
 | NFR-03 | No hardcoded user-specific paths; all paths are resolved from the environment. | Static check; code review |
 | NFR-04 | Never deletes user files or folders, never modifies the Windows registry directly, never modifies unrelated applications or settings. | Code review; integration tests |
 | NFR-05 | Failures are handled explicitly and reported with a message identifying the failed step. Unexpected errors are never suppressed. | Unit tests: failure cases |
-| NFR-09 | The bootstrapper returns distinct exit codes: success (including nothing to change); failed with no changes, or with every change rolled back except shared dependencies, which are kept and reported (ADR-020); failed with rollback also failed (manual recovery needed); stopped awaiting approval or an unmet precondition. Code values are defined in ARCHITECTURE.md. | Unit/integration tests per outcome |
 | NFR-06 | Tested with Pester 5 (unit and integration). Unit tests mock all external commands; integration tests use isolated temporary paths and are non-destructive to the host. Tests cover success, failure, idempotency, and recovery. | Test suite |
 | NFR-07 | Pester 5 is a development prerequisite installed in CurrentUser scope. The bootstrapper never installs or modifies Pester. | Code review |
+| NFR-08 | Supports the x64 CPU architecture only. On any other architecture, stop with a clear message before making changes. Other architectures may be added in later releases. | Unit tests: architecture check |
+| NFR-09 | The bootstrapper returns distinct exit codes: success (including nothing to change); failed with no changes, or with every change rolled back except shared dependencies, which are kept and reported (ADR-020); failed with rollback also failed (manual recovery needed); stopped awaiting approval or an unmet precondition. Code values are defined in ARCHITECTURE.md. | Unit/integration tests per outcome |
 
 ## Out of scope
 

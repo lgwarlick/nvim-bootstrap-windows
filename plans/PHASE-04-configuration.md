@@ -1,4 +1,4 @@
-# Phase 04 - Configuration deployment
+# Phase 04 - Configuration deployment and backup
 
 ## Status
 Tracked in the GitHub milestone **Phase 04 - Configuration deployment and backup** (see [ROADMAP.md](ROADMAP.md)).
