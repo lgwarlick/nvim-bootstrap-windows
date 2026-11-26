@@ -28,9 +28,17 @@ Steps 0–3 of the execution flow in ARCHITECTURE.md, plus the pieces every late
 - Validation check: manifest values match the COMPATIBILITY.md tables.
 
 ### Step 0 — Preflight (nothing changes)
+Step 0 runs every check and approval that does not depend on an install, so exit 3 always means nothing changed
+(ARCHITECTURE.md, Execution flow; ADR-024). This phase adds the checks below; Phase 04 adds its own (paths,
+different drive, configuration approval, Neovim running).
 - `Test-IsElevated` (NFR-02), `Test-SupportedArchitecture` (x64; NFR-08), `Test-WinGetAvailable`.
+- Detection, read-only: `Get-DependencyStatus` for every Tier B dependency; any BelowMinimum → stop with name,
+  found version, and minimum (FR-22).
+- `Get-InstalledNeovimVersion`: Neovim on PATH but not installed by WinGet → stop (FR-13); newer than pinned →
+  ask for downgrade approval (prompt or `-AllowNeovimDowngrade`; `-Force` never approves it), stop if not given
+  (FR-12). The current version is recorded as `previousNeovimVersion`.
 - Confirm WinGet still offers every version the run may install (Neovim, tree-sitter-cli, tested versions of
-  missing Tier B dependencies). If one is gone, stop with exit 3 before any change (known issue 4).
+  missing Tier B dependencies). If one is gone, stop before any change (known issue 4).
 - Any failure → clear message, exit 3.
 
 ### Wrappers
@@ -48,11 +56,12 @@ Steps 0–3 of the execution flow in ARCHITECTURE.md, plus the pieces every late
   7-Zip is detected even though it is not on PATH (known issue 1 is solved in Phase 05; detection is here).
 
 ### Steps 1–3 — Installation
-- Step 1, `Install-Dependency` (FR-21, FR-22): Missing → install the tested version; Ok → no change; BelowMinimum →
-  stop with name, found version, and minimum (exit 3 if nothing changed yet, otherwise exit 1).
-- Step 2, `Install-Neovim` (FR-10–FR-13): not installed by WinGet → stop, exit 3; absent or older → install the
-  pinned version; same → no change; newer → stop (exit 3) unless approved by the interactive prompt or
-  `-AllowNeovimDowngrade`. `-Force` never approves a downgrade.
+- Step 1, `Install-Dependency` (FR-21): Missing → install the tested version; Ok → no change. BelowMinimum never
+  reaches this step (step 0 stops first). A failed install exits 1; dependencies already installed in this run are
+  kept and listed in the summary (ADR-020).
+- Step 2, `Install-Neovim` (FR-10–FR-12): absent or older → install the pinned version; same → no change; newer →
+  install the pinned version only if approved in step 0. The FR-13 stop and the downgrade approval happen in
+  step 0.
 - Step 3, `Install-TreeSitterCli` (FR-20): install the pinned version if it is not already installed.
 - After each install: `Update-SessionPath` rebuilds the session PATH from the machine and user values (known issue
   3), then the new program must be found and report the expected version, or the step fails.
@@ -77,7 +86,9 @@ Steps 0–3 of the execution flow in ARCHITECTURE.md, plus the pieces every late
 - Downgrade approval: prompt accepted, prompt declined, `-AllowNeovimDowngrade`, and `-Force` alone (must not
   downgrade).
 - Preflight: each failure stops with exit 3 and makes no install calls; a missing WinGet version stops before any
-  change.
+  change. A Tier B dependency below minimum stops in step 0 even when other Tier B dependencies are missing, so
+  nothing is installed. A declined downgrade approval stops in step 0 before any Tier B install.
+- Exit 1 after a step 1 install: a later failure keeps the installed dependencies and lists them in the summary.
 - Integration (sandboxed, WinGet mocked): steps 0–3 on a "fresh machine" fixture, then a second run reports no
   changes (FR-70 for these steps).
 - Validation: manifest-vs-COMPATIBILITY.md check passes, and fails on a deliberately mismatched fixture.

@@ -26,6 +26,9 @@ A major release also links to its section in [docs/UPGRADING.md](docs/UPGRADING.
 - Work tracking moved to GitHub issues and milestones; issue and pull request templates added.
 - Neovim configuration and data paths are computed from the environment when Neovim is not installed, so
   `-WhatIf` reports concrete paths on a fresh machine (ADR-023).
+- Every check and approval that does not depend on an install now runs in step 0, so exit code 3 always means
+  nothing changed. Neovim running is checked again before any write (exit 1). Exit code 1 lists shared
+  dependencies kept from earlier in the run (ADR-024, NFR-09).
 
 ### Pins
 

@@ -94,7 +94,7 @@ Backup and recovery details are defined in ROLLBACK.md.
 | NFR-03 | No hardcoded user-specific paths; all paths are resolved from the environment. | Static check; code review |
 | NFR-04 | Never deletes user files or folders, never modifies the Windows registry directly, never modifies unrelated applications or settings. | Code review; integration tests |
 | NFR-05 | Failures are handled explicitly and reported with a message identifying the failed step. Unexpected errors are never suppressed. | Unit tests: failure cases |
-| NFR-09 | The bootstrapper returns distinct exit codes: success (including nothing to change); failed with no changes or a clean rollback; failed with rollback also failed (manual recovery needed); stopped awaiting approval or an unmet precondition. Code values are defined in ARCHITECTURE.md. | Unit/integration tests per outcome |
+| NFR-09 | The bootstrapper returns distinct exit codes: success (including nothing to change); failed with no changes, or with every change rolled back except shared dependencies, which are kept and reported (ADR-020); failed with rollback also failed (manual recovery needed); stopped awaiting approval or an unmet precondition. Code values are defined in ARCHITECTURE.md. | Unit/integration tests per outcome |
 | NFR-06 | Tested with Pester 5 (unit and integration). Unit tests mock all external commands; integration tests use isolated temporary paths and are non-destructive to the host. Tests cover success, failure, idempotency, and recovery. | Test suite |
 | NFR-07 | Pester 5 is a development prerequisite installed in CurrentUser scope. The bootstrapper never installs or modifies Pester. | Code review |
 
