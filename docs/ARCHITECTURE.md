@@ -82,7 +82,8 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │                    newer than pinned → stop unless approved by prompt or -AllowNeovimDowngrade (FR-12)
   3. tree-sitter-cli (Tier A) ─ install pinned version if needed
   │
-  4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data')
+  4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data');
+  │                  if Neovim is not installed (-WhatIf), compute them from the environment
   5. Existing configuration ─ identical to release? → skip 5–6
   │                           Neovim running? → stop, exit 3 (FR-34)
   │                           otherwise: approval (FR-33), then back up by move + verify (ROLLBACK.md)
@@ -120,10 +121,16 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 
 ### Path resolution (FR-30, NFR-03)
 
-- Neovim's own `stdpath('config')` and `stdpath('data')` are the source of truth, queried from the installed Neovim
+- When Neovim is installed, its own `stdpath('config')` and `stdpath('data')` are the source of truth, queried
   via `Invoke-NeovimHeadless`. This respects any `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, or `NVIM_APPNAME` the user
   has set.
+- When Neovim is not installed (for example, a `-WhatIf` run on a fresh machine, or a check in step 0 before
+  Neovim is installed), the paths are computed from the environment the same way Neovim computes them (ADR-023):
+  - application name: `NVIM_APPNAME` if set, otherwise `nvim`;
+  - config: `%XDG_CONFIG_HOME%\<name>` if `XDG_CONFIG_HOME` is set, otherwise `%LOCALAPPDATA%\<name>`;
+  - data: `%XDG_DATA_HOME%\<name>-data` if `XDG_DATA_HOME` is set, otherwise `%LOCALAPPDATA%\<name>-data`.
 - Defaults when nothing is overridden: config `%LOCALAPPDATA%\nvim`, data `%LOCALAPPDATA%\nvim-data`.
+- A Compatibility-suite test confirms the computed paths match Neovim's own answer for the same environment.
 - Bootstrapper state: `%LOCALAPPDATA%\nvim-bootstrap\` (backups per ADR-016).
 - No path is ever built from a literal user name or drive letter.
 
