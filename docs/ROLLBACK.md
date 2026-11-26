@@ -72,8 +72,8 @@ Live locations come from Neovim's `stdpath()` (ARCHITECTURE.md, Path resolution)
 
 ## How backup works
 
-1. **Approval first.** Confirm with the user (or `-Force`) before anything moves (FR-33). If approval is not given,
-   nothing has changed and the run stops (exit 3).
+1. **Approval first.** Confirm with the user (or `-Force`) in step 0, before anything is installed or moved (FR-33).
+   If approval is not given, nothing has changed and the run stops (exit 3).
 2. **Record.** Write the manifest's file list (sizes, plus hashes for configuration) from the live locations.
 3. **Move.** Move each live item into the backup folder. A move on the same drive is a rename. The files are not
    copied or deleted, and the live locations are left empty for a clean install.
@@ -83,8 +83,8 @@ Live locations come from Neovim's `stdpath()` (ARCHITECTURE.md, Path resolution)
    code 1. Nothing is deployed.
 
 **Different drives:** if a live location is on a different drive from `%LOCALAPPDATA%` (possible when
-`XDG_CONFIG_HOME` or `XDG_DATA_HOME` is set), a move would become copy-then-delete. The bootstrapper stops before
-backing up (exit 3) and reports why.
+`XDG_CONFIG_HOME` or `XDG_DATA_HOME` is set), a move would become copy-then-delete. The bootstrapper checks this in
+step 0 and stops before anything is installed or moved (exit 3), reporting why.
 
 ## How restore works (automatic rollback)
 

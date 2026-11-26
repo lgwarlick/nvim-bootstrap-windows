@@ -32,6 +32,7 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 | [ADR-021](#adr-021-windows-sandbox-for-end-to-end-tests) | Windows Sandbox for end-to-end tests | Accepted |
 | [ADR-022](#adr-022-releases-are-github-releases-from-tags-on-main) | Releases are GitHub Releases from tags on main | Accepted |
 | [ADR-023](#adr-023-neovim-paths-without-an-installed-neovim) | Neovim paths without an installed Neovim | Accepted |
+| [ADR-024](#adr-024-all-checks-and-approvals-before-any-install) | All checks and approvals before any install | Accepted |
 
 ---
 
@@ -301,3 +302,25 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
   If a future Neovim changes how it computes these paths, the Compatibility-suite test fails and the rule is
   updated with the Neovim pin. Rejected: reporting without paths (vague `-WhatIf` output), and always computing
   from the environment (drops Neovim as the source of truth when it is present).
+
+## ADR-024: All checks and approvals before any install
+
+- **Status:** Accepted (2026-11-25). Decided in issue #6.
+- **Context:** Shared (Tier B) dependencies were installed in step 1, before later checks that stop the run: FR-13
+  and the FR-12 downgrade approval (step 2), and FR-34, the configuration approval (FR-33), and the different-drive
+  check (step 5). Exit code 3 ("stopped before changing anything") was then false, and exit 1 ("nothing changed, or
+  everything rolled back") was false too, because Tier B installs are never uninstalled (ADR-020). Declining the
+  configuration overwrite could leave newly installed programs behind.
+- **Decision:**
+  - Step 0 runs every check and approval that does not depend on an install: preflight, Tier B detection including
+    the below-minimum stop (FR-22), FR-13, the FR-12 downgrade approval, FR-34 (Neovim running), the FR-33
+    configuration approval, and the different-drive check. Paths come from ADR-023 when Neovim is not installed.
+  - Exit 3 keeps its strict meaning: stopped before changing anything.
+  - FR-34 is checked again immediately before anything is written to the configuration or data folders, because
+    Neovim can be started while steps 1–3 run. A failure there exits 1.
+  - Exit 1 is amended: shared dependencies installed earlier in the run are kept (ADR-020) and listed in the
+    summary. NFR-09 is worded to match.
+- **Consequences:** All prompts come at the start of a run, and unattended runs fail before installing anything.
+  Rejected: redefining exit 3 to allow kept Tier B installs (loses the "nothing changed" guarantee); moving only
+  the cheap checks (leaves the configuration approval after installs); requiring that Neovim is not installed
+  (conflicts with FR-02, FR-11, NFR-06 idempotency, and repair mode, and does not protect the pin after install).

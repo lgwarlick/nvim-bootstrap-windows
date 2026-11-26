@@ -14,8 +14,19 @@ Build the Lua configuration, configuration path resolution, existing-config dete
 
 ## Scope
 
-Steps 4–6 of the execution flow in ARCHITECTURE.md. Backup behavior is defined in ROLLBACK.md; this phase
-implements its "How backup works" section exactly.
+Steps 4–6 of the execution flow in ARCHITECTURE.md, and the checks and approval those steps contribute to step 0
+(ADR-024). Backup behavior is defined in ROLLBACK.md; this phase implements its "How backup works" section exactly.
+
+### Step 0 additions (nothing changes)
+Added to preflight after the Phase 03 checks, so each runs before anything is installed and stops with exit 3:
+- `Get-NeovimPath` (from the installed Neovim, or computed from the environment if Neovim is not installed;
+  ADR-023).
+- `Test-ConfigurationCurrent`; if the configuration is not current and any backup item exists: stop if any live
+  item is on a different drive from `%LOCALAPPDATA%\nvim-bootstrap\backups`, then ask for approval with
+  `ShouldContinue`, unless `-Force` (non-interactive without `-Force` stops).
+- `Test-NeovimRunning` (FR-34).
+
+The approval result is kept in run state for step 5.
 
 ### Configuration structure
 - Create the `src/config/` file layout from ARCHITECTURE.md (ADR-019): `init.lua` and `lua/config/options.lua`
@@ -35,15 +46,14 @@ implements its "How backup works" section exactly.
 ### Step 5 — Existing configuration, approval, backup (FR-31, FR-32, FR-33, FR-34, FR-62)
 - `Test-ConfigurationCurrent`: the live configuration is current only if its files exactly match `src/config/`
   (same file list, same SHA-256 hashes). If current, skip steps 5–6.
-- `Test-NeovimRunning`: if any `nvim.exe` process is running, stop with exit 3 and ask the user to close Neovim
-  (FR-34). Checked before any backup or deployment.
-- If any backup item exists and the configuration is not current:
-  1. Stop with exit 3 if any live item is on a different drive from `%LOCALAPPDATA%\nvim-bootstrap\backups`.
-  2. Ask for approval with `ShouldContinue`, unless `-Force`. Non-interactive without `-Force` → exit 3, nothing
-     changed.
-  3. `New-ConfigurationBackup`: write the manifest, move every existing item into the backup folder.
-  4. `Test-ConfigurationBackup`: verify against the manifest; set `status: verified`.
-  5. On any failure in 3–4: move the moved items back, verify, exit 1 (or 2 if moving back fails).
+- `Test-NeovimRunning`: if any `nvim.exe` process is running, stop and ask the user to close Neovim (FR-34). Run
+  in step 0 (exit 3) and again immediately before the first write to the configuration or data folders, because
+  Neovim can be started while steps 1–3 run (exit 1).
+- If any backup item exists and the configuration is not current (the drive check and approval already passed in
+  step 0):
+  1. `New-ConfigurationBackup`: write the manifest, move every existing item into the backup folder.
+  2. `Test-ConfigurationBackup`: verify against the manifest; set `status: verified`.
+  3. On any failure in 1–2: move the moved items back, verify, exit 1 (or 2 if moving back fails).
 - If no backup item exists (fresh machine), no approval or backup is needed.
 
 ### Step 6 — Deployment
@@ -66,14 +76,16 @@ implements its "How backup works" section exactly.
 - Unit (mocked): path resolution from Neovim output; path resolution without Neovim (defaults, each of
   `NVIM_APPNAME`, `XDG_CONFIG_HOME`, `XDG_DATA_HOME` set, and all three set); current/not-current detection
   (identical, changed file, extra file, missing file); approval accepted / declined / `-Force` / non-interactive without `-Force`; different-drive
-  stop; Neovim running → exit 3 with no changes (process list mocked); manifest contents; verification catches a missing or changed file; move-back after a failed backup;
+  stop; Neovim running in step 0 → exit 3 with no changes, and started after step 0 → exit 1 with nothing moved
+  (process list mocked); manifest contents; verification catches a missing or changed file; move-back after a
+  failed backup;
   `-WhatIf` moves and copies nothing.
 - Integration (sandbox with real files, WinGet mocked):
   - Fresh machine → configuration deployed, no backup made.
   - Existing user configuration and plugin data → approval → backup verified (manifest `status: verified`) →
     configuration deployed; every original file is present in the backup.
   - Rerun → no changes, no new backup (FR-70 for these steps).
-  - Approval declined → exit 3, nothing moved.
+  - Approval declined → exit 3 from step 0; nothing moved and no install calls made.
   - Simulated verification failure → items moved back, exit 1.
 - Real Neovim, sandboxed: `stdpath()` honors the sandbox's `LOCALAPPDATA` and `XDG_*` values; the deployed
   configuration starts headless with no errors.

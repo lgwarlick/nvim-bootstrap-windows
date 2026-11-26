@@ -72,21 +72,28 @@ and the one-responsibility-per-function rule.
 ```text
 bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │
-  0. Preflight ─ elevated? x64? WinGet present? manifest valid?
-  │              previous run interrupted (FR-63)? ─────────────────── fails ──► stop, exit 3
+  0. Preflight (changes nothing; every check and approval that does not depend on an install)
+  │    elevated? x64? WinGet present? manifest valid? previous run interrupted (FR-63)?
+  │    shared dependencies (Tier B): detect each; any below minimum? (FR-22)
+  │    Neovim: on PATH but not installed by WinGet? (FR-13); record current version;
+  │            newer than pinned → approved by prompt or -AllowNeovimDowngrade? (FR-12)
+  │    WinGet still offers every version this run would install?
+  │    paths: stdpath('config') and stdpath('data') from the installed Neovim,
+  │           or computed from the environment if Neovim is not installed (ADR-023)
+  │    configuration identical to release? if not, and an existing configuration or plugin data exists:
+  │           live folder on a different drive from the backup folder?
+  │           approval (FR-33)?
+  │    Neovim running? (FR-34) ──────────────────────────────────────────── any fails ──► stop, exit 3
   │
-  1. Shared dependencies (Tier B) ─ detect each; install tested version if missing;
-  │                                 stop if below minimum (exit 3); refresh session PATH
-  2. Neovim (Tier A) ─ not installed by WinGet → stop, exit 3 (FR-13)
-  │                    record current version; install pinned version if needed;
-  │                    newer than pinned → stop unless approved by prompt or -AllowNeovimDowngrade (FR-12)
+  1. Shared dependencies (Tier B) ─ install tested version of each missing one; refresh session PATH
+  2. Neovim (Tier A) ─ install pinned version if absent, older, or newer and approved in step 0
   3. tree-sitter-cli (Tier A) ─ install pinned version if needed
   │
   4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data');
-  │                  if Neovim is not installed (-WhatIf), compute them from the environment
-  5. Existing configuration ─ identical to release? → skip 5–6
-  │                           Neovim running? → stop, exit 3 (FR-34)
-  │                           otherwise: approval (FR-33), then back up by move + verify (ROLLBACK.md)
+  │                  if Neovim is not installed (-WhatIf), use the paths computed in step 0
+  5. Existing configuration ─ Neovim running? (FR-34 recheck, before the first write) → stop, exit 1
+  │                           identical to release? → skip to step 7
+  │                           otherwise: back up by move + verify (ROLLBACK.md), approved in step 0
   6. Deploy configuration
   7. Plugins and tools ─ Lazy! restore → Mason tools at pinned versions → tree-sitter parsers
   8. Verify ─ headless Neovim loads the configuration without errors
@@ -99,12 +106,10 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 
 | Failed in step | What is restored | Exit code |
 |---|---|---|
-| 0 | Nothing changed | 3 |
-| 1 | Tier B installs are kept (never uninstalled); nothing else changed | 1 |
-| 2–3 | Previous Neovim version reinstalled if step 2 changed it (FR-61) | 1, or 2 if restore fails |
-| 5 (approval declined, or non-interactive without `-Force`) | Nothing changed; no backup made | 3 |
-| 5 (live folder on a different drive from the backup folder) | Nothing changed | 3 |
-| 5 (Neovim is running) | Nothing changed | 3 |
+| 0 (any check fails, or an approval is declined or not given) | Nothing changed | 3 |
+| 1 | Tier B installs are kept (never uninstalled) and listed in the summary; nothing else changed | 1 |
+| 2–3 | Previous Neovim version reinstalled if step 2 changed it (FR-61); Tier B installs kept | 1, or 2 if restore fails |
+| 5 (Neovim started after step 0) | Nothing moved; previous Neovim reinstalled if changed; Tier B installs kept | 1, or 2 if restore fails |
 | 5 (backup failed or not verified) | Moved items moved back and verified; nothing deployed | 1, or 2 if moving back fails |
 | 6–8 | Configuration and plugin data restored from backup (FR-60); previous Neovim reinstalled if changed | 1, or 2 if restore fails |
 
@@ -113,7 +118,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 | Code | Meaning |
 |---|---|
 | 0 | Success, including "nothing to change" and `-WhatIf` runs |
-| 1 | Failed; nothing was changed, or every change was rolled back successfully |
+| 1 | Failed; nothing was changed, or every change was rolled back successfully. Shared (Tier B) dependencies installed earlier in the run are kept (ADR-020) and listed in the summary |
 | 2 | Failed **and** rollback failed; manual recovery needed (see ROLLBACK.md) |
 | 3 | Stopped before changing anything: unmet precondition or approval not given |
 
@@ -124,7 +129,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 - When Neovim is installed, its own `stdpath('config')` and `stdpath('data')` are the source of truth, queried
   via `Invoke-NeovimHeadless`. This respects any `XDG_CONFIG_HOME`, `XDG_DATA_HOME`, or `NVIM_APPNAME` the user
   has set.
-- When Neovim is not installed (for example, a `-WhatIf` run on a fresh machine, or a check in step 0 before
+- When Neovim is not installed (for example, a `-WhatIf` run on a fresh machine, or the checks in step 0 before
   Neovim is installed), the paths are computed from the environment the same way Neovim computes them (ADR-023):
   - application name: `NVIM_APPNAME` if set, otherwise `nvim`;
   - config: `%XDG_CONFIG_HOME%\<name>` if `XDG_CONFIG_HOME` is set, otherwise `%LOCALAPPDATA%\<name>`;
@@ -140,9 +145,10 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   before each change.
 - Overwriting an existing configuration also requires `$PSCmdlet.ShouldContinue` (an interactive prompt) unless
   `-Force` is given.
-- In a non-interactive session without `-Force`, the run stops at step 5 with exit code 3.
+- The approval is asked in step 0, before anything is installed. In a non-interactive session without `-Force`, the
+  run stops in step 0 with exit code 3.
 - Installing an older pinned Neovim over a newer one (FR-12) has its own approval: the prompt, or
-  `-AllowNeovimDowngrade` for unattended runs. `-Force` does not approve it. Without either, the run stops at step 2
+  `-AllowNeovimDowngrade` for unattended runs. `-Force` does not approve it. Without either, the run stops in step 0
   with exit code 3.
 - A `-WhatIf` run performs all detection steps and reports every change it would make, but changes nothing.
 
