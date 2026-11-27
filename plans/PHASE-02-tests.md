@@ -25,6 +25,10 @@ Create test helpers, fixtures, mocks, test execution commands, and initial faili
   Integration; Compatibility is opt-in because it runs real Neovim (Phase 05).
 - Runs a single test file (`-Path`) or tests matching a name (`-TestName`, Pester `FullNameFilter`).
 - Exits 0 when all selected tests pass, non-zero otherwise.
+- Tests written ahead of their implementation (the Phase 03 tests below) are tagged `NotImplemented`. The runner
+  excludes that tag by default and includes it with `-IncludeNotImplemented`, so the default run (and the CI check
+  from #16) stays green while those tests still show their expected failures on request. The phase that
+  implements a function removes the tag from its tests (owner decision, 2026-11-25, recorded in #19).
 
 ### Validation runner — `scripts/Invoke-Validation.ps1`
 - A list of independent checks, each reporting pass/fail with file and line; non-zero exit if any fail.
@@ -56,7 +60,8 @@ Create test helpers, fixtures, mocks, test execution commands, and initial faili
 - `.gitignore` entries for test result output.
 
 ### Initial failing tests (for Phase 03)
-Written against the function names in ARCHITECTURE.md, covering Phase 03's requirements (ROADMAP.md):
+Written against the function names in ARCHITECTURE.md, covering Phase 03's requirements (ROADMAP.md), and tagged
+`NotImplemented` (see Test runner):
 - Preflight: elevated / not elevated (NFR-02); x64 / other architecture (NFR-08); WinGet present / missing.
 - Neovim: absent → install pinned; same → no change; older → install pinned; newer → stop unless approved
   (FR-10, FR-11, FR-12).

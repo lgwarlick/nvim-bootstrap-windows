@@ -52,15 +52,28 @@ pull request bodies.
 
 ## Commands
 
-Not implemented yet. Phase 02 creates the runners and must document here how to run the full suite, one suite, one file, one test, and validation. Planned interface (PHASE-02-tests.md):
+Run from the repository root in Windows PowerShell 5.1 (`powershell.exe`, not `pwsh`). The runner imports
+Pester 5.9.1 exactly and exits 0 (all passed), 1 (a failure), or 2 (could not start, or no tests selected).
 
-- `scripts/Invoke-Tests.ps1 -Suite Unit|Integration|Compatibility|All` (default: Unit and Integration), `-Path <file>`, `-TestName <filter>`
-- `scripts/Invoke-Validation.ps1`
+```powershell
+scripts\Invoke-Tests.ps1                                    # default: Unit and Integration suites
+scripts\Invoke-Tests.ps1 -Suite All                         # Unit, Integration, and Compatibility
+scripts\Invoke-Tests.ps1 -Suite Unit                        # one suite (Unit, Integration, or Compatibility)
+scripts\Invoke-Tests.ps1 -Path tests\Unit\Invoke-Tests.Tests.ps1                     # one file
+scripts\Invoke-Tests.ps1 -TestName 'Get-TestRunPath.selects only the named suite'    # one test (wildcards allowed)
+scripts\Invoke-Tests.ps1 -IncludeNotImplemented             # also run tests tagged NotImplemented
+scripts\Invoke-Tests.ps1 -ResultPath TestResults\results.xml  # also write NUnit XML (ignored by git)
+```
+
+`-TestName` matches the full name: Describe, Context, and It names joined by `.`. Tests written ahead of their
+implementation are tagged `NotImplemented` and are excluded by default (see PHASE-02-tests.md).
+
+Validation (`scripts/Invoke-Validation.ps1`) is not implemented yet (issue #20).
 
 ## Environment notes
 
 - Target is Windows PowerShell 5.1. See COMPATIBILITY.md ("Windows PowerShell 5.1 coding constraints") for disallowed syntax and 5.1 pitfalls (BOM on `-Encoding UTF8`, `curl` alias).
-- Pester 5.9.1 is the supported version (ADR-013), but the only Pester on this host is the Windows-inbox 3.4.0. Do not install or upgrade Pester without approval.
+- Pester 5.9.1 (ADR-013) and PSScriptAnalyzer 1.25.0 are installed in CurrentUser scope on this host, side by side with the Windows-inbox Pester 3.4.0. Do not install, upgrade, or remove modules without approval.
 - This machine is the reference test device (COMPATIBILITY.md). Any change to it — installing programs, enabling Windows Sandbox, touching the real Neovim configuration — needs explicit approval. Destructive and real-install tests run only in Windows Sandbox (ADR-021).
 - Neovim is installed via WinGet, which is assumed to be present.
 - `azure-pipelines.yml` belongs to the project owner; do not edit it unless asked.
