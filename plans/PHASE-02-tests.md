@@ -55,6 +55,18 @@ Create test helpers, fixtures, mocks, test execution commands, and initial faili
   `-ModuleName NeovimBootstrap`. No unit test calls a real external program.
 - `tests/Fixtures/`: captured outputs used by mocks: `winget list` / `winget show` (installed, not installed,
   older, newer), `nvim --version`, and a Store-alias `python.exe` case.
+- **Validation fixtures are built at run time** (owner decision, 2026-11-27, PR #32): the known-good and known-bad
+  inputs for validation checks are written by each test into its own folder inside `TestDrive`, not committed under
+  `tests/Fixtures/`. Rationale:
+  - Validation runs over the whole repository, so committed known-bad files would make it fail on itself unless
+    their folder were skipped, and a skipped folder would also hide real problems placed there later.
+  - Writing exact bytes at run time means an editor cannot silently "fix" a fixture (for example, drop a BOM) and
+    leave a test that no longer proves anything.
+  - Cost: the fixtures exist only in test code and cannot be browsed or passed to `Invoke-Validation.ps1` by hand.
+
+  A test file is itself validated, so a value that would fail a check in that file (such as a user-profile path)
+  is assembled from parts at run time. `tests/Fixtures/` remains the place for captured real output, which has to
+  be recorded once and cannot be generated.
 - Folder layout as in ARCHITECTURE.md: `tests/Unit/`, `tests/Integration/`, `tests/Compatibility/`,
   `tests/Fixtures/`. Test files are named `<FunctionOrArea>.Tests.ps1`.
 - `.gitignore` entries for test result output.
