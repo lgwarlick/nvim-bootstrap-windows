@@ -68,7 +68,15 @@ scripts\Invoke-Tests.ps1 -ResultPath TestResults\results.xml  # also write NUnit
 `-TestName` matches the full name: Describe, Context, and It names joined by `.`. Tests written ahead of their
 implementation are tagged `NotImplemented` and are excluded by default (see PHASE-02-tests.md).
 
-Validation (`scripts/Invoke-Validation.ps1`) is not implemented yet (issue #20).
+```powershell
+scripts\Invoke-Validation.ps1                               # static checks over the repository
+```
+
+Validation runs every check and prints `PASS` or `FAIL` for each, listing failures as `<file>:<line>: <message>`.
+Checks: PowerShell 5.1 syntax (parsed with the 5.1 parser), no hardcoded user-profile paths in PowerShell, Lua, and
+JSON files, and UTF-8 without BOM for Markdown, PowerShell, and Lua files. It exits 0 (all passed), 1 (a check
+failed), or 2 (not running in Windows PowerShell 5.1, or the root folder is missing). New checks are added to
+`Get-ValidationCheck` in the script.
 
 ## Environment notes
 
