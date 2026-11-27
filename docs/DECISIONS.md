@@ -32,7 +32,8 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 | [ADR-021](#adr-021-windows-sandbox-for-end-to-end-tests) | Windows Sandbox for end-to-end tests | Accepted |
 | [ADR-022](#adr-022-releases-are-github-releases-from-tags-on-main) | Releases are GitHub Releases from tags on main | Accepted |
 | [ADR-023](#adr-023-neovim-paths-without-an-installed-neovim) | Neovim paths without an installed Neovim | Accepted |
-| [ADR-024](#adr-024-all-checks-and-approvals-before-any-install) | All checks and approvals before any install | Accepted |
+| [ADR-024](#adr-024-all-checks-and-approvals-before-any-install) | All checks and approvals before any install | Superseded by ADR-025 |
+| [ADR-025](#adr-025-all-checks-before-any-install-wait-for-neovim-to-close) | All checks before any install; wait for Neovim to close | Accepted |
 
 ---
 
@@ -305,7 +306,8 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
 
 ## ADR-024: All checks and approvals before any install
 
-- **Status:** Accepted (2026-11-25). Decided in issue #6.
+- **Status:** Superseded by [ADR-025](#adr-025-all-checks-before-any-install-wait-for-neovim-to-close) (2026-11-27).
+  Decided in issue #6.
 - **Context:** Shared (Tier B) dependencies were installed in step 1, before later checks that stop the run: FR-13
   and the FR-12 downgrade approval (step 2), and FR-34, the configuration approval (FR-33), and the different-drive
   check (step 5). Exit code 3 ("stopped before changing anything") was then false, and exit 1 ("nothing changed, or
@@ -324,3 +326,36 @@ Decisions are never deleted. A changed decision is marked **Superseded** and lin
   Rejected: redefining exit 3 to allow kept Tier B installs (loses the "nothing changed" guarantee); moving only
   the cheap checks (leaves the configuration approval after installs); requiring that Neovim is not installed
   (conflicts with FR-02, FR-11, NFR-06 idempotency, and repair mode, and does not protect the pin after install).
+- **Why superseded:** Failing at the FR-34 recheck rolled back a run the user could fix by closing Neovim, and a
+  Neovim opened later in the run could leave rollback unable to restore locked files (exit 2). ADR-025 keeps this
+  decision and changes what happens when Neovim is found running after step 0.
+
+## ADR-025: All checks before any install; wait for Neovim to close
+
+- **Status:** Accepted (2026-11-27). Supersedes [ADR-024](#adr-024-all-checks-and-approvals-before-any-install).
+  Decided in issue #29.
+- **Context:** Under ADR-024 the FR-34 recheck before the first write failed the run with exit 1. A run can take
+  several minutes, so the user can open Neovim after step 0. Failing at the recheck rolled back a changed Neovim
+  while Neovim was running, and a Neovim opened after the recheck could make a later step fail and leave rollback
+  unable to restore locked files (exit 2, manual recovery). FR-34 says the bootstrapper does nothing while Neovim
+  is open.
+- **Decision:**
+  - Step 0 runs every check and approval that does not depend on an install: preflight, Tier B detection including
+    the below-minimum stop (FR-22), FR-13, the FR-12 downgrade approval, FR-34 (Neovim running), the FR-33
+    configuration approval, and the different-drive check. Paths come from ADR-023 when Neovim is not installed.
+  - Exit 3 keeps its strict meaning: stopped before changing anything.
+  - FR-34 is checked again immediately before anything is written to the configuration or data folders. If Neovim
+    is running, an interactive run pauses, asks the user to close Neovim, checks again, and continues once it is
+    closed. If the user cancels, the run fails with exit 1 and rolls back.
+  - Before rollback moves, copies, or reinstalls anything, it checks FR-34 the same way and continues once Neovim
+    is closed. If the user cancels, rollback changes nothing further and the run exits 2 with the backup and log
+    paths printed.
+  - Unattended runs (a non-interactive session, or `-Force`) never pause: the recheck fails with exit 1, and
+    rollback stops before touching anything with exit 2, printing the backup and log paths.
+  - Exit 1 is amended: shared dependencies installed earlier in the run are kept (ADR-020) and listed in the
+    summary. NFR-09 is worded to match.
+- **Consequences:** All approvals still come at the start of a run, and unattended runs still fail before
+  installing anything. In an interactive run, opening Neovim mid-run costs a prompt instead of a rollback or a
+  half-restored machine. Rejected: keeping ADR-024's failing recheck (see above); checking for Neovim before every
+  step (the rollback check already covers Neovim being opened at any point); and the alternatives rejected in
+  ADR-024.

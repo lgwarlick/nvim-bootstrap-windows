@@ -33,6 +33,8 @@ A major release also links to its section in [docs/UPGRADING.md](docs/UPGRADING.
   dependencies kept from earlier in the run (ADR-024, NFR-09).
 - FR-34 now stops every run while Neovim is open, including reruns that would change nothing and plugin repair
   in step 7. A rerun with Neovim open exits 3 instead of reporting no changes (FR-70).
+- If Neovim is opened while a run is in progress, an interactive run now waits for the user to close it, both before
+  the first write and before rollback, instead of failing. Unattended runs still fail (ADR-025 supersedes ADR-024).
 
 ### Pins
 

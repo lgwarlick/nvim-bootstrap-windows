@@ -53,7 +53,7 @@ Each runs headless Neovim through `Invoke-NeovimHeadless` with an explicit timeo
 - `Install-TreeSitterParsers`: install the parsers in `pins.lua`; verify each parser library exists.
 - **Repair mode:** if the configuration is current but plugin data is missing or incomplete, install only what is
   missing (ROLLBACK.md, When a backup is made). FR-34 applies: a running Neovim stops the run in step 0, and the
-  step 5 recheck runs before any repair (exit 1).
+  step 5 recheck runs before any repair (ADR-025).
 - Make 7-Zip available to Mason without changing persistent environment settings (known issue 1). Candidate: add
   7-Zip's folder to `PATH` inside Neovim only (`vim.env.PATH`), for both headless and normal sessions.
 
@@ -92,8 +92,8 @@ Each is settled by evidence from the compatibility check:
 
 ## Test Requirements
 - Unit (mocked): each step 7 function's success, failure (Neovim non-zero exit or timeout), already-done (no
-  change), repair-mode, and `-WhatIf` paths; repair mode with Neovim started after step 0 stops at the recheck
-  before anything is written (exit 1); verification detects a plugin at the wrong commit, a tool at the wrong
+  change), repair-mode, and `-WhatIf` paths; repair mode with Neovim started after step 0 writes nothing until
+  the recheck passes (ADR-025); verification detects a plugin at the wrong commit, a tool at the wrong
   version, and a missing parser.
 - Integration (sandbox, real Neovim and network): from an empty profile, steps 4–8 produce a working setup; a second
   run makes no changes (FR-70).

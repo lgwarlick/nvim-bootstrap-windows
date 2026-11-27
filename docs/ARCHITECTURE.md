@@ -92,7 +92,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │
   4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data');
   │                  if Neovim is not installed (-WhatIf), use the paths computed in step 0
-  5. Existing configuration ─ Neovim running? (FR-34 recheck, before the first write) → stop, exit 1
+  5. Existing configuration ─ Neovim running? (FR-34 recheck, before the first write) → wait for it to close (ADR-025)
   │                           identical to release? → skip to step 7 (repair, if needed, after the recheck)
   │                           otherwise: back up by move + verify (ROLLBACK.md), approved in step 0
   6. Deploy configuration
@@ -110,9 +110,13 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 | 0 (any check fails, or an approval is declined or not given) | Nothing changed | 3 |
 | 1 | Tier B installs are kept (never uninstalled) and listed in the summary; nothing else changed | 1 |
 | 2–3 | Previous Neovim version reinstalled if step 2 changed it (FR-61); Tier B installs kept | 1, or 2 if restore fails |
-| 5 (Neovim started after step 0) | Nothing moved; previous Neovim reinstalled if changed; Tier B installs kept | 1, or 2 if restore fails |
+| 5 (Neovim started after step 0 and not closed: cancelled, or unattended run) | Nothing moved; previous Neovim reinstalled if changed; Tier B installs kept | 1, or 2 if restore fails |
 | 5 (backup failed or not verified) | Moved items moved back and verified; nothing deployed | 1, or 2 if moving back fails |
 | 6–8 | Configuration and plugin data restored from backup (FR-60); previous Neovim reinstalled if changed | 1, or 2 if restore fails |
+
+Before rollback moves, copies, or reinstalls anything, it checks that Neovim is closed (FR-34). An interactive run
+asks the user to close it and waits; a cancel or an unattended run stops with exit 2 before rollback touches
+anything (ADR-025).
 
 ### Exit codes (NFR-09)
 
@@ -151,6 +155,9 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
 - Installing an older pinned Neovim over a newer one (FR-12) has its own approval: the prompt, or
   `-AllowNeovimDowngrade` for unattended runs. `-Force` does not approve it. Without either, the run stops in step 0
   with exit code 3.
+- If Neovim is opened after step 0, an interactive run pauses at the FR-34 recheck and before rollback until the
+  user closes it (ADR-025). This pause is not an approval: `-Force` and non-interactive sessions never pause and
+  fail instead (exit 1 at the recheck, exit 2 at rollback).
 - A `-WhatIf` run performs all detection steps and reports every change it would make, but changes nothing.
 
 ### Error handling (NFR-05)
