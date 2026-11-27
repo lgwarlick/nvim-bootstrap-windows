@@ -45,7 +45,7 @@ demonstrated.
 | FR-31 | Detect an existing Neovim configuration before deploying. | Unit tests |
 | FR-32 | Before overwriting an existing configuration, create a backup, verify it, and obtain approval. Do not overwrite if any of these fail. | Unit tests; integration test with isolated paths |
 | FR-33 | Approval is given by an interactive confirmation prompt, or by the `-Force` switch for unattended runs. Without either, stop safely before overwriting and make no changes. | Unit tests: prompt accepted / declined / `-Force` / non-interactive without `-Force` |
-| FR-34 | If any Neovim process is running, stop before making any change and ask the user to close Neovim. This applies to every run, including a rerun that would make no changes, and to every step that writes to the configuration or data folders, including plugin repair. | Unit test |
+| FR-34 | If any Neovim process is running, stop before making any change and ask the user to close Neovim. This applies to every run, including a rerun that would make no changes, and to every step that writes to the configuration or data folders, including plugin repair and rollback. If Neovim is started while a run is in progress, the run waits for the user to close it before writing or rolling back, or fails if it cannot ask (ADR-025). | Unit test |
 
 ### Plugin management
 

@@ -28,6 +28,9 @@ Test full bootstrap execution, broken configurations, failed plugin installation
 - `Restore-NeovimVersion` (FR-61): reinstall `previousNeovimVersion` in place; if WinGet cannot install the older
   version over the newer one, uninstall the newer Neovim and install the previous version, only after confirming
   WinGet still offers it (known issue 4). If it is not offered, uninstall nothing and fail.
+- Before any rollback step, check that Neovim is closed (FR-34, ADR-025): an interactive run asks the user to close
+  it and waits; a cancel, a non-interactive session, or `-Force` stops with exit 2 before anything is touched, with
+  the backup and log paths printed.
 - Wire rollback into `Invoke-NeovimBootstrap` exactly as in the ARCHITECTURE.md failure table, including exit code 2
   (rollback failed) with the backup and log paths printed.
 
@@ -53,6 +56,10 @@ Each scenario injects one failure and checks the restored state and the exit cod
 | Neovim changed, later failure | Neovim upgraded in step 2, failure in step 7 | Config and data restored; previous Neovim reinstalled; exit 1 |
 | Restore fails | Copy-back fails (e.g. a locked file) | Exit 2; backup, `failed\` folder, and log intact; paths printed |
 | Previous Neovim no longer offered | WinGet no longer lists `previousNeovimVersion` | Neovim not uninstalled; exit 2 with explanation |
+| Neovim opened mid-run, closed when asked | Neovim started during step 2; user closes it at the step 5 prompt | Run continues; nothing rolled back; exit 0 |
+| Neovim opened mid-run, unattended | Neovim started during step 3 with `-Force`; Neovim not changed by the run | Nothing moved; exit 1 |
+| Neovim open at rollback, closed when asked | Neovim started during step 7, which then fails | Rollback waits until Neovim is closed, then restores; exit 1 |
+| Neovim open at rollback, unattended | As above, with `-Force` | Rollback touches nothing; exit 2; backup and log paths printed |
 
 ### Open items resolved in this phase (ROADMAP.md)
 - **Neovim MSI downgrade:** determine whether WinGet installs an older Neovim over a newer one in place, and record

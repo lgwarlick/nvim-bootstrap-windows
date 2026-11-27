@@ -91,6 +91,11 @@ step 0 and stops before anything is installed or moved (exit 3), reporting why.
 
 Triggered by a failure in steps 6–8 (ARCHITECTURE.md, On failure).
 
+Before any step below, check that Neovim is closed (FR-34). If it is running, an interactive run asks the user to
+close it and waits. If the user cancels, or the run is unattended (non-interactive, or `-Force`), stop with exit
+code 2 before changing anything (ADR-025). The same check comes before reinstalling Neovim after a failure in
+steps 2–5.
+
 1. **Set aside the failed state.** Move whatever the failed run created in each live location into the backup's
    `failed\` folder.
 2. **Copy back.** Copy each backed-up item to its live location. A copy, not a move, so the backup stays complete

@@ -29,7 +29,7 @@ Steps 0–3 of the execution flow in ARCHITECTURE.md, plus the pieces every late
 
 ### Step 0 — Preflight (nothing changes)
 Step 0 runs every check and approval that does not depend on an install, so exit 3 always means nothing changed
-(ARCHITECTURE.md, Execution flow; ADR-024). This phase adds the checks below; Phase 04 adds its own (paths,
+(ARCHITECTURE.md, Execution flow; ADR-025). This phase adds the checks below; Phase 04 adds its own (paths,
 different drive, configuration approval, Neovim running).
 - `Test-IsElevated` (NFR-02), `Test-SupportedArchitecture` (x64; NFR-08), `Test-WinGetAvailable`.
 - Detection, read-only: `Get-DependencyStatus` for every Tier B dependency; any BelowMinimum → stop with name,
