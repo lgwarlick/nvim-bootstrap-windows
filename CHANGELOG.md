@@ -18,6 +18,8 @@ A major release also links to its section in [docs/UPGRADING.md](docs/UPGRADING.
 - Project documentation for release 1.0.0 (Phase 01): requirements, architecture, compatibility, rollback,
   architectural decisions, approved plugins, roadmap, phase plans 01–06, and a work-in-progress plan for Phase 07.
 - `docs/UPGRADING.md` placeholder and empty `azure-pipelines.yml`.
+- Test runner `scripts/Invoke-Tests.ps1` (Pester 5.9.1, suite selection, single file or test, `NotImplemented` tag
+  exclusion) with its own unit and integration tests; Pester prerequisite instructions in README.md.
 
 ### Changed
 

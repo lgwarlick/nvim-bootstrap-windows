@@ -43,6 +43,27 @@ Exact versions: [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 Contributors and agents: start with [AGENTS.md](AGENTS.md).
 
+## Development prerequisites
+
+Contributors only; the bootstrapper itself never installs or changes Pester (NFR-07).
+
+The tests need **Pester 5.9.1** (ADR-013), installed for the current user side by side with the Pester 3.4.0 that
+ships with Windows. Leave 3.4.0 in place. In **Windows PowerShell 5.1** (`powershell.exe`, not PowerShell 7):
+
+```powershell
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Scope CurrentUser -Force
+Install-Module -Name Pester -RequiredVersion 5.9.1 -Repository PSGallery -Scope CurrentUser -SkipPublisherCheck -Force
+Get-Module -Name Pester -ListAvailable    # lists 5.9.1 and 3.4.0
+```
+
+- The first command installs the NuGet provider that `Install-Module` needs. Without it, `Install-Module` stops
+  to ask whether to install the provider.
+- `-SkipPublisherCheck` is required: the built-in Pester 3.4.0 is signed with a different certificate than
+  Pester 5, and the publisher check would otherwise block the install.
+- `-Force` also skips the prompt about installing from the untrusted PSGallery repository.
+
+Run the tests with `scripts\Invoke-Tests.ps1`; all options are in [CLAUDE.md](CLAUDE.md) ("Commands").
+
 ## License
 
 No license has been chosen yet (tracked in [plans/PHASE-07-release.md](plans/PHASE-07-release.md)).
