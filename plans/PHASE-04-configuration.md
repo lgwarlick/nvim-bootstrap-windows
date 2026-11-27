@@ -47,8 +47,8 @@ The approval result is kept in run state for step 5.
 - `Test-ConfigurationCurrent`: the live configuration is current only if its files exactly match `src/config/`
   (same file list, same SHA-256 hashes). If current, skip steps 5–6.
 - `Test-NeovimRunning`: if any `nvim.exe` process is running, stop and ask the user to close Neovim (FR-34). Run
-  in step 0 (exit 3) and again immediately before the first write to the configuration or data folders, because
-  Neovim can be started while steps 1–3 run (exit 1).
+  in step 0 on every run, even when nothing would be written (exit 3), and again immediately before the first
+  write to the configuration or data folders, because Neovim can be started while steps 1–3 run (exit 1).
 - If any backup item exists and the configuration is not current (the drive check and approval already passed in
   step 0):
   1. `New-ConfigurationBackup`: write the manifest, move every existing item into the backup folder.
@@ -76,9 +76,9 @@ The approval result is kept in run state for step 5.
 - Unit (mocked): path resolution from Neovim output; path resolution without Neovim (defaults, each of
   `NVIM_APPNAME`, `XDG_CONFIG_HOME`, `XDG_DATA_HOME` set, and all three set); current/not-current detection
   (identical, changed file, extra file, missing file); approval accepted / declined / `-Force` / non-interactive without `-Force`; different-drive
-  stop; Neovim running in step 0 → exit 3 with no changes, and started after step 0 → exit 1 with nothing moved
-  (process list mocked); manifest contents; verification catches a missing or changed file; move-back after a
-  failed backup;
+  stop; Neovim running in step 0 → exit 3 with no changes (also when the configuration is current), and started
+  after step 0 → exit 1 with nothing moved (process list mocked); manifest contents; verification catches a
+  missing or changed file; move-back after a failed backup;
   `-WhatIf` moves and copies nothing.
 - Integration (sandbox with real files, WinGet mocked):
   - Fresh machine → configuration deployed, no backup made.

@@ -9,7 +9,8 @@ How the bootstrapper is built. What it must do is in [REQUIREMENTS.md](REQUIREME
 1. **Thin entry point, small functions.** `bootstrap.ps1` only parses parameters, calls one orchestrator function,
    and converts the result to an exit code. All logic lives in small, individually testable module functions.
 2. **Test, then set.** Every step first checks whether the machine is already in the desired state. If so, it
-   reports "no change" and does nothing (FR-70).
+   reports "no change" and does nothing (FR-70). The one exception is a running Neovim: the run stops in step 0
+   even when nothing would change (FR-34).
 3. **Every change goes through `ShouldProcess`.** `-WhatIf` and `-Confirm` work for the whole run and for every
    function on its own (FR-71).
 4. **External programs are called through wrappers.** WinGet and Neovim are invoked from exactly one function
@@ -83,7 +84,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   │    configuration identical to release? if not, and an existing configuration or plugin data exists:
   │           live folder on a different drive from the backup folder?
   │           approval (FR-33)?
-  │    Neovim running? (FR-34) ──────────────────────────────────────────── any fails ──► stop, exit 3
+  │    Neovim running? (FR-34, every run) ───────────────────────────────── any fails ──► stop, exit 3
   │
   1. Shared dependencies (Tier B) ─ install tested version of each missing one; refresh session PATH
   2. Neovim (Tier A) ─ install pinned version if absent, older, or newer and approved in step 0
@@ -92,7 +93,7 @@ bootstrap.ps1 [-WhatIf] [-Confirm] [-Force] [-AllowNeovimDowngrade]
   4. Resolve paths ─ ask the installed Neovim for stdpath('config') and stdpath('data');
   │                  if Neovim is not installed (-WhatIf), use the paths computed in step 0
   5. Existing configuration ─ Neovim running? (FR-34 recheck, before the first write) → stop, exit 1
-  │                           identical to release? → skip to step 7
+  │                           identical to release? → skip to step 7 (repair, if needed, after the recheck)
   │                           otherwise: back up by move + verify (ROLLBACK.md), approved in step 0
   6. Deploy configuration
   7. Plugins and tools ─ Lazy! restore → Mason tools at pinned versions → tree-sitter parsers

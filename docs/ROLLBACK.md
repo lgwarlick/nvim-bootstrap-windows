@@ -36,7 +36,8 @@ Live locations come from Neovim's `stdpath()` (ARCHITECTURE.md, Path resolution)
 
 - **Configuration already matches the release, and plugin data is current:** no backup; nothing is replaced (FR-70).
 - **Configuration already matches, but plugin data is missing or incomplete:** step 7 repairs it in place by adding
-  what is missing. Nothing existing is replaced, so no backup is needed.
+  what is missing. Nothing existing is replaced, so no backup is needed. Like every write, repair runs only while
+  Neovim is closed (FR-34).
 - **Anything else** (first install over a user's own config, or upgrading from an older release): all items above
   that exist are backed up together, after approval.
 
